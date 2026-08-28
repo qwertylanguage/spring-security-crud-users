@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>User Page</title>
+</head>
+
+<body>
+
+<h1>User Page</h1>
+
+<p>
+    First name:
+    <span th:text="${user.firstName}"></span>
+</p>
+
+<p>
+    Last name:
+    <span th:text="${user.lastName}"></span>
+</p>
+
+<p>
+    Age:
+    <span th:text="${user.age}"></span>
+</p>
+
+<p>
+    Username:
+    <span th:text="${user.username}"></span>
+</p>
+
+<br>
+
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
+
+</body>
+
+
+
+</html>

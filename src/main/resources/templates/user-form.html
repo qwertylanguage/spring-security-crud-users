@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>User Form</title>
+</head>
+
+<body>
+
+<h1>User Form</h1>
+
+<form th:action="@{${user.id == null ? '/admin' : '/admin/update'}}"
+      th:object="${user}"
+      method="post"
+      autocomplete="off">
+
+    <input type="hidden" th:field="*{id}">
+
+    <label>First name:</label>
+    <input type="text" th:field="*{firstName}">
+    <br><br>
+
+    <label>Last name:</label>
+    <input type="text" th:field="*{lastName}">
+    <br><br>
+
+    <label>Age:</label>
+    <input type="number" th:field="*{age}">
+    <br><br>
+
+    <label>Username:</label>
+    <input type="text"
+           th:field="*{username}"
+           autocomplete="off">
+    <br><br>
+
+    <label>Password:</label>
+    <input type="password"
+           name="password"
+           autocomplete="new-password"
+           value="">
+    <br><br>
+
+    <label>Roles:</label>
+
+    <div th:each="role : ${roles}">
+        <input type="checkbox"
+               name="roleIds"
+               th:value="${role.id}">
+
+        <span th:text="${role.name}"></span>
+    </div>
+
+    <br>
+
+    <button type="submit">Save</button>
+
+</form>
+
+<br>
+
+<a th:href="@{/admin}">Back to users</a>
+
+</body>
+</html>
