@@ -4,63 +4,210 @@
 <head>
     <meta charset="UTF-8">
     <title>User Form</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
 </head>
 
 <body>
 
-<h1>User Form</h1>
+<nav class="navbar navbar-dark bg-dark px-4">
+    <div class="container-fluid">
 
-<form th:action="@{${user.id == null ? '/admin' : '/admin/update'}}"
-      th:object="${user}"
-      method="post"
-      autocomplete="off">
+        <span class="navbar-text text-white">
+            Admin panel
+        </span>
 
-    <input type="hidden" th:field="*{id}">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit"
+                    class="btn btn-outline-light btn-sm">
+                Logout
+            </button>
+        </form>
 
-    <label>First name:</label>
-    <input type="text" th:field="*{firstName}">
-    <br><br>
+    </div>
+</nav>
 
-    <label>Last name:</label>
-    <input type="text" th:field="*{lastName}">
-    <br><br>
 
-    <label>Age:</label>
-    <input type="number" th:field="*{age}">
-    <br><br>
+<div class="container-fluid">
 
-    <label>Username:</label>
-    <input type="text"
-           th:field="*{username}"
-           autocomplete="off">
-    <br><br>
+    <div class="row">
 
-    <label>Password:</label>
-    <input type="password"
-           name="password"
-           autocomplete="new-password"
-           value="">
-    <br><br>
+        <!--SIDEBAR-->
+        <div class="col-2 bg-light min-vh-100 p-0">
 
-    <label>Roles:</label>
+            <div class="list-group list-group-flush">
 
-    <div th:each="role : ${roles}">
-        <input type="checkbox"
-               name="roleIds"
-               th:value="${role.id}">
+                <a th:href="@{/admin}"
+                   class="list-group-item list-group-item-action active">
+                    Admin
+                </a>
 
-        <span th:text="${role.name}"></span>
+                <a th:href="@{/user}"
+                   class="list-group-item list-group-item-action">
+                    User
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!--MAIN-->
+        <div class="col-10 p-4">
+
+            <h1 class="mb-4">Admin panel</h1>
+
+            <!--TABS-->
+            <ul class="nav nav-tabs mb-3">
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                       th:href="@{/admin}">
+                        All Users
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active"
+                       th:href="@{/admin/new}">
+                        New User
+                    </a>
+                </li>
+
+            </ul>
+
+
+            <!--CARD-->
+            <div class="card">
+
+                <div class="card-header fw-bold"
+                     th:text="${user.id == null ? 'Add new user' : 'Edit user'}">
+                </div>
+
+                <div class="card-body">
+
+                    <form th:action="@{${user.id == null ? '/admin' : '/admin/update'}}"
+                          th:object="${user}"
+                          method="post"
+                          autocomplete="off">
+
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="row justify-content-center">
+
+                            <div class="col-md-6 col-lg-4">
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        First Name
+                                    </label>
+
+                                    <input type="text"
+                                           class="form-control"
+                                           th:field="*{firstName}">
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Last Name
+                                    </label>
+
+                                    <input type="text"
+                                           class="form-control"
+                                           th:field="*{lastName}">
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Age
+                                    </label>
+
+                                    <input type="number"
+                                           class="form-control"
+                                           th:field="*{age}">
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Username
+                                    </label>
+
+                                    <input type="text"
+                                           class="form-control"
+                                           th:field="*{username}"
+                                           autocomplete="off">
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Password
+                                    </label>
+
+                                    <input type="password"
+                                           class="form-control"
+                                           name="password"
+                                           autocomplete="new-password"
+                                           value="">
+                                </div>
+
+
+                                <div class="mb-3">
+
+                                    <label class="form-label fw-semibold">
+                                        Roles
+                                    </label>
+
+                                    <div th:each="role : ${roles}"
+                                         class="form-check">
+
+                                        <input type="checkbox"
+                                               class="form-check-input"
+                                               name="roleIds"
+                                               th:value="${role.id}"
+                                               th:id="'role-' + ${role.id}">
+
+                                        <label class="form-check-label"
+                                               th:for="'role-' + ${role.id}"
+                                               th:text="${role.name}">
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="mt-4 text-center">
+
+                                    <button type="submit"
+                                            class="btn btn-success">
+                                        Add new user
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <br>
+</div>
 
-    <button type="submit">Save</button>
 
-</form>
-
-<br>
-
-<a th:href="@{/admin}">Back to users</a>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
