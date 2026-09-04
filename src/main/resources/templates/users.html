@@ -15,13 +15,27 @@
 <nav class="navbar navbar-dark bg-dark px-4">
   <div class="container-fluid">
 
-        <span class="navbar-text text-white">
-            Admin panel
-        </span>
+    <span class="navbar-text text-white">
+
+  <strong th:text="${currentUser.username}"></strong>
+
+  <span> with roles: [</span>
+
+  <span th:each="role, iterStat : ${currentUser.roles}">
+
+    <span th:text="${#strings.replace(role.name, 'ROLE_', '')}"></span>
+
+    <span th:if="${!iterStat.last}">, </span>
+
+  </span>
+
+  <span>]</span>
+
+</span>
 
     <form th:action="@{/logout}" method="post">
       <button type="submit"
-              class="btn btn-outline-light btn-sm">
+              class="btn btn-link text-secondary text-decoration-none p-0">
         Logout
       </button>
     </form>
@@ -108,20 +122,16 @@
             <tr th:each="user : ${users}">
 
               <td th:text="${user.id}"></td>
-
               <td th:text="${user.firstName}"></td>
-
               <td th:text="${user.lastName}"></td>
-
               <td th:text="${user.age}"></td>
-
               <td th:text="${user.username}"></td>
 
               <td>
-                  <span th:each="role : ${user.roles}"
-                        class="badge bg-secondary me-1"
-                        th:text="${role.name}">
-                  </span>
+                <span th:each="role : ${user.roles}"
+                      class="badge bg-secondary me-1"
+                      th:text="${role.name}">
+                </span>
               </td>
 
               <td>
@@ -134,19 +144,12 @@
               </td>
 
               <td>
-                <form th:action="@{/admin/{id}(id=${user.id})}"
-                      method="post">
-
-                  <input type="hidden"
-                         name="_method"
-                         value="delete">
-
-                  <button type="submit"
-                          class="btn btn-danger btn-sm">
-                    Delete
-                  </button>
-
-                </form>
+                <button type="button"
+                        class="btn btn-danger btn-sm"
+                        data-bs-toggle="modal"
+                        th:data-bs-target="'#deleteModal-' + ${user.id}">
+                  Delete
+                </button>
               </td>
 
             </tr>
@@ -155,9 +158,11 @@
 
           </table>
 
-          <!-- EDIT MODALS -->
+
+          <!-- MODALS -->
           <div th:each="user : ${users}">
 
+            <!-- EDIT MODAL -->
             <div class="modal fade"
                  th:id="'editModal-' + ${user.id}"
                  tabindex="-1"
@@ -167,7 +172,6 @@
 
                 <div class="modal-content">
 
-                  <!-- HEADER -->
                   <div class="modal-header">
 
                     <h5 class="modal-title">
@@ -181,15 +185,12 @@
 
                   </div>
 
-
-                  <!-- FORM -->
                   <form th:action="@{/admin/update}"
                         method="post"
                         autocomplete="off">
 
                     <div class="modal-body">
 
-                      <!-- ID -->
                       <div class="mb-3">
 
                         <label class="form-label fw-semibold">
@@ -208,7 +209,6 @@
                       </div>
 
 
-                      <!-- FIRST NAME -->
                       <div class="mb-3">
 
                         <label class="form-label fw-semibold">
@@ -223,7 +223,6 @@
                       </div>
 
 
-                      <!-- LAST NAME -->
                       <div class="mb-3">
 
                         <label class="form-label fw-semibold">
@@ -238,7 +237,6 @@
                       </div>
 
 
-                      <!-- AGE -->
                       <div class="mb-3">
 
                         <label class="form-label fw-semibold">
@@ -253,7 +251,6 @@
                       </div>
 
 
-                      <!-- USERNAME -->
                       <div class="mb-3">
 
                         <label class="form-label fw-semibold">
@@ -269,7 +266,6 @@
                       </div>
 
 
-                      <!-- PASSWORD -->
                       <div class="mb-3">
 
                         <label class="form-label fw-semibold">
@@ -288,8 +284,6 @@
 
                       </div>
 
-
-                      <!-- ROLES -->
 
                       <div class="mb-3">
 
@@ -311,12 +305,14 @@
                                  th:for="'edit-' + ${user.id} + '-role-' + ${role.id}"
                                  th:text="${role.name}">
                           </label>
+
                         </div>
+
                       </div>
+
                     </div>
 
 
-                    <!-- FOOTER -->
                     <div class="modal-footer">
 
                       <button type="button"
@@ -333,6 +329,151 @@
                     </div>
 
                   </form>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- DELETE MODAL -->
+            <div class="modal fade"
+                 th:id="'deleteModal-' + ${user.id}"
+                 tabindex="-1"
+                 aria-hidden="true">
+
+              <div class="modal-dialog">
+
+                <div class="modal-content">
+
+                  <div class="modal-header">
+
+                    <h5 class="modal-title">
+                      Delete user
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                  </div>
+
+
+                  <div class="modal-body">
+
+                    <div class="mb-3">
+
+                      <label class="form-label fw-semibold">
+                        ID
+                      </label>
+
+                      <input type="text"
+                             class="form-control"
+                             th:value="${user.id}"
+                             disabled>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                      <label class="form-label fw-semibold">
+                        First Name
+                      </label>
+
+                      <input type="text"
+                             class="form-control"
+                             th:value="${user.firstName}"
+                             disabled>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                      <label class="form-label fw-semibold">
+                        Last Name
+                      </label>
+
+                      <input type="text"
+                             class="form-control"
+                             th:value="${user.lastName}"
+                             disabled>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                      <label class="form-label fw-semibold">
+                        Age
+                      </label>
+
+                      <input type="text"
+                             class="form-control"
+                             th:value="${user.age}"
+                             disabled>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                      <label class="form-label fw-semibold">
+                        Username
+                      </label>
+
+                      <input type="text"
+                             class="form-control"
+                             th:value="${user.username}"
+                             disabled>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                      <label class="form-label fw-semibold">
+                        Roles
+                      </label>
+
+                      <div>
+                        <span th:each="role : ${user.roles}"
+                              class="badge bg-secondary me-1"
+                              th:text="${role.name}">
+                        </span>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+
+                  <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                      Close
+                    </button>
+
+                    <form th:action="@{/admin/{id}(id=${user.id})}"
+                          method="post">
+
+                      <input type="hidden"
+                             name="_method"
+                             value="delete">
+
+                      <button type="submit"
+                              class="btn btn-danger">
+                        Delete
+                      </button>
+
+                    </form>
+
+                  </div>
 
                 </div>
 

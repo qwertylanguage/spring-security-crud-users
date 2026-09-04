@@ -12,6 +12,8 @@ import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 
+import org.springframework.security.core.Authentication;
+
 @Controller
 @RequestMapping("/admin")
 public class UserController {
@@ -26,9 +28,15 @@ public class UserController {
     }
 
     @GetMapping
-    public String getAllUsers(Model model) {
+    public String getAllUsers(Authentication authentication, Model model) {
+
+        User currentUser =
+                userService.getUserByUsername(authentication.getName());
+
+        model.addAttribute("currentUser", currentUser);
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("roles", roleRepository.findAll());
+
         return "users";
     }
 
