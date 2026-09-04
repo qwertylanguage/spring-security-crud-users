@@ -106,6 +106,10 @@
                                     <input type="text"
                                            class="form-control"
                                            th:field="*{firstName}">
+                                    <div class="text-danger"
+                                         th:if="${#fields.hasErrors('firstName')}"
+                                         th:errors="*{firstName}">
+                                    </div>
                                 </div>
 
 
@@ -117,6 +121,10 @@
                                     <input type="text"
                                            class="form-control"
                                            th:field="*{lastName}">
+                                    <div class="text-danger"
+                                         th:if="${#fields.hasErrors('lastName')}"
+                                         th:errors="*{lastName}">
+                                    </div>
                                 </div>
 
 
@@ -128,6 +136,10 @@
                                     <input type="number"
                                            class="form-control"
                                            th:field="*{age}">
+                                    <div class="text-danger"
+                                         th:if="${#fields.hasErrors('age')}"
+                                         th:errors="*{age}">
+                                    </div>
                                 </div>
 
 
@@ -140,6 +152,10 @@
                                            class="form-control"
                                            th:field="*{username}"
                                            autocomplete="off">
+                                    <div class="text-danger"
+                                         th:if="${#fields.hasErrors('username')}"
+                                         th:errors="*{username}">
+                                    </div>
                                 </div>
 
 
@@ -169,7 +185,8 @@
                                                class="form-check-input"
                                                name="roleIds"
                                                th:value="${role.id}"
-                                               th:id="'role-' + ${role.id}">
+                                               th:id="'role-' + ${role.id}"
+                                               th:checked="${user.roles != null and user.roles.contains(role)}">
 
                                         <label class="form-check-label"
                                                th:for="'role-' + ${role.id}"
@@ -177,7 +194,6 @@
                                         </label>
 
                                     </div>
-
                                 </div>
 
 

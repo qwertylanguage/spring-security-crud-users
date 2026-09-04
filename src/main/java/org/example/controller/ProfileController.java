@@ -1,7 +1,7 @@
 package org.example.controller;
 
 import org.example.model.User;
-import org.example.repository.UserRepository;
+import org.example.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class ProfileController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public ProfileController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public ProfileController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/user")
@@ -21,7 +21,7 @@ public class ProfileController {
 
         String username = authentication.getName();
 
-        User user = userRepository.findByUsername(username);
+        User user = userService.getUserByUsername(username);
 
         model.addAttribute("user", user);
 

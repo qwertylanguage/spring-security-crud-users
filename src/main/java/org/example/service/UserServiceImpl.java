@@ -13,6 +13,7 @@ import java.util.Set;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -43,6 +44,10 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 
     @Override
     public List<User> getAllUsers() {
@@ -82,9 +87,7 @@ public class UserServiceImpl implements UserService {
             );
         }
 
-        if (user.getRoles() != null) {
-            existingUser.setRoles(user.getRoles());
-        }
+        existingUser.setRoles(user.getRoles());
 
         userRepository.save(existingUser);
     }

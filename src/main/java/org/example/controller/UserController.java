@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashSet;
 import java.util.List;
 
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+
 @Controller
 @RequestMapping("/admin")
 public class UserController {
@@ -25,6 +28,7 @@ public class UserController {
     @GetMapping
     public String getAllUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("roles", roleRepository.findAll());
         return "users";
     }
 
@@ -37,8 +41,15 @@ public class UserController {
 
     @PostMapping
     public String saveUser(
-            @ModelAttribute("user") User user,
-            @RequestParam(value = "roleIds", required = false) List<Long> roleIds) {
+            @Valid @ModelAttribute("user") User user,
+            BindingResult bindingResult,
+            @RequestParam(value = "roleIds", required = false) List<Long> roleIds,
+            Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("roles", roleRepository.findAll());
+            return "user-form";
+        }
 
         if (roleIds != null) {
             user.setRoles(
@@ -60,13 +71,22 @@ public class UserController {
 
     @PostMapping("/update")
     public String updateUser(
-            @ModelAttribute("user") User user,
-            @RequestParam(value = "roleIds", required = false) List<Long> roleIds) {
+            @Valid @ModelAttribute("user") User user,
+            BindingResult bindingResult,
+            @RequestParam(value = "roleIds", required = false) List<Long> roleIds,
+            Model model) {
 
         if (roleIds != null) {
             user.setRoles(
                     new HashSet<>(roleRepository.findAllById(roleIds))
             );
+        } else {
+            user.setRoles(new HashSet<>());
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("roles", roleRepository.findAll());
+            return "user-form";
         }
 
         userService.updateUser(user);
