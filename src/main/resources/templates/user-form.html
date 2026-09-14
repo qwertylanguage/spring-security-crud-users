@@ -82,17 +82,19 @@
             <div class="card">
 
                 <div class="card-header fw-bold"
-                     th:text="${user.id == null ? 'Add new user' : 'Edit user'}">
+                     th:text="${isCreate ? 'Add new user' : 'Edit user'}">
                 </div>
 
                 <div class="card-body">
 
-                    <form th:action="@{${user.id == null ? '/admin' : '/admin/update'}}"
+                    <form th:action="${isCreate ? '/admin' : '/admin/update'}"
                           th:object="${user}"
                           method="post"
                           autocomplete="off">
 
-                        <input type="hidden" th:field="*{id}">
+                        <input th:if="${!isCreate}"
+                               type="hidden"
+                               th:field="*{id}">
 
                         <div class="row justify-content-center">
 
@@ -164,11 +166,25 @@
                                         Password
                                     </label>
 
-                                    <input type="password"
+                                    <!-- CREATE -->
+                                    <input th:if="${isCreate}"
+                                           type="password"
+                                           class="form-control"
+                                           th:field="*{password}"
+                                           autocomplete="new-password">
+
+                                    <!-- EDIT -->
+                                    <input th:if="${!isCreate}"
+                                           type="password"
                                            class="form-control"
                                            name="password"
                                            autocomplete="new-password"
                                            value="">
+
+                                    <div th:if="${isCreate and #fields.hasErrors('password')}"
+                                         class="text-danger"
+                                         th:errors="*{password}">
+                                    </div>
                                 </div>
 
 
@@ -186,7 +202,7 @@
                                                name="roleIds"
                                                th:value="${role.id}"
                                                th:id="'role-' + ${role.id}"
-                                               th:checked="${user.roles != null and user.roles.contains(role)}">
+                                               th:checked="${!isCreate and user.roles != null and user.roles.contains(role)}">
 
                                         <label class="form-check-label"
                                                th:for="'role-' + ${role.id}"

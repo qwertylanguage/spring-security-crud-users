@@ -14,6 +14,8 @@ import org.springframework.validation.BindingResult;
 
 import org.springframework.security.core.Authentication;
 
+import org.example.dto.UserCreateDto;
+
 @Controller
 @RequestMapping("/admin")
 public class UserController {
@@ -42,22 +44,35 @@ public class UserController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("user", new UserCreateDto());
         model.addAttribute("roles", roleRepository.findAll());
+        model.addAttribute("isCreate", true);
+
         return "user-form";
     }
 
     @PostMapping
     public String saveUser(
-            @Valid @ModelAttribute("user") User user,
+            @Valid @ModelAttribute("user") UserCreateDto userDto,
             BindingResult bindingResult,
             @RequestParam(value = "roleIds", required = false) List<Long> roleIds,
             Model model) {
 
+        System.out.println("PASSWORD = [" + userDto.getPassword() + "]");
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("roles", roleRepository.findAll());
+            model.addAttribute("isCreate", true);
             return "user-form";
         }
+
+        User user = new User();
+
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setAge(userDto.getAge());
+        user.setUsername(userDto.getUsername());
+        user.setPassword(userDto.getPassword());
 
         if (roleIds != null) {
             user.setRoles(
@@ -74,6 +89,8 @@ public class UserController {
     public String showEditForm(@PathVariable Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
         model.addAttribute("roles", roleRepository.findAll());
+        model.addAttribute("isCreate", false);
+
         return "user-form";
     }
 
@@ -94,6 +111,12 @@ public class UserController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("roles", roleRepository.findAll());
+            return "user-form";
+        }
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("roles", roleRepository.findAll());
+            model.addAttribute("isCreate", false);
+
             return "user-form";
         }
 
