@@ -9,11 +9,13 @@ import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
 
+import jakarta.validation.constraints.Pattern;
 
-public class UserCreateDto {
+public class UserUpdateDto {
 
     @NotEmpty(message = "At least one role must be selected")
     private List<Long> roleIds;
+
 
     public List<Long> getRoleIds() {
         return roleIds;
@@ -23,27 +25,26 @@ public class UserCreateDto {
         this.roleIds = roleIds;
     }
 
-    @NotBlank(message = "First name is required")
-    @Size(min = 2, max = 50,
-            message = "First name must be between 2 and 50 characters")
+    @NotBlank
+    @Size(min = 2, max = 50)
     private String firstName;
 
-    @NotBlank(message = "Last name is required")
-    @Size(min = 2, max = 50,
-            message = "Last name must be between 2 and 50 characters")
+    @NotBlank
+    @Size(min = 2, max = 50)
     private String lastName;
 
-    @Min(value = 1, message = "Age must be between 1 and 120")
-    @Max(value = 120, message = "Age must be between 1 and 120")
+    @Min(1)
+    @Max(120)
     private int age;
 
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 50,
-            message = "Username must be between 3 and 50 characters")
+    @NotBlank
+    @Size(min = 3, max = 50)
     private String username;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 3, max = 20, message = "Password must be between 3 and 20 characters")
+    @Pattern(
+            regexp = "^$|^.{3,20}$",
+            message = "Password must be between 3 and 20 characters"
+    )
     private String password;
 
     public String getFirstName() {

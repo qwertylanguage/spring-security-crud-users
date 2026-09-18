@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <title>Admin panel</title>
 
+  <meta name="_csrf" th:content="${_csrf.token}">
+  <meta name="_csrf_header" th:content="${_csrf.headerName}">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
 </head>
@@ -77,24 +80,117 @@
       <ul class="nav nav-tabs mb-3">
 
         <li class="nav-item">
-          <a class="nav-link active"
-             th:href="@{/admin}">
+          <button class="nav-link active"
+                  id="allUsersTab"
+                  type="button">
             All Users
-          </a>
+          </button>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link"
-             th:href="@{/admin/new}">
+          <button class="nav-link"
+                  id="newUserTab"
+                  type="button">
             New User
-          </a>
+          </button>
         </li>
 
       </ul>
 
 
       <!--CARD-->
-      <div class="card">
+
+      <!-- NEW USER FORM -->
+      <div id="newUserSection" class="card mb-3" style="display: none;">
+
+        <div class="card-header fw-bold">
+          Add new user
+        </div>
+
+        <div class="card-body">
+
+          <form id="newUserForm" autocomplete="off">
+            <div class="row justify-content-center">
+              <div class="col-md-6 col-lg-4">
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">
+                    First Name
+                  </label>
+                  <input type="text"
+                         class="form-control"
+                         id="newFirstName">
+                  <div class="text-danger" id="newFirstNameError"></div>
+
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">
+                    Last Name
+                  </label>
+                  <input type="text"
+                         class="form-control"
+                         id="newLastName">
+                  <div class="text-danger" id="newLastNameError"></div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">
+                    Age
+                  </label>
+                  <input type="number"
+                         class="form-control"
+                         id="newAge">
+                  <div class="text-danger" id="newAgeError"></div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">
+                    Username
+                  </label>
+                  <input type="text"
+                         class="form-control"
+                         id="newUsername"
+                         autocomplete="off">
+                  <div class="text-danger" id="newUsernameError"></div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">
+                    Password
+                  </label>
+                  <input type="password"
+                         class="form-control"
+                         id="newPassword"
+                         autocomplete="new-password">
+                  <div class="text-danger" id="newPasswordError"></div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">
+                    Roles
+                  </label>
+
+                  <div id="newRoles"></div>
+                  <div class="text-danger" id="newRolesError"></div>
+                </div>
+
+                <div class="mt-4 text-center">
+                  <button type="submit"
+                          class="btn btn-success">
+                    Add new user
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+
+      <div class="card" id="allUsersSection" >
 
         <div class="card-header fw-bold">
           All Users
@@ -117,339 +213,110 @@
             </tr>
             </thead>
 
-            <tbody>
-
-            <tr th:each="user : ${users}">
-
-              <td th:text="${user.id}"></td>
-              <td th:text="${user.firstName}"></td>
-              <td th:text="${user.lastName}"></td>
-              <td th:text="${user.age}"></td>
-              <td th:text="${user.username}"></td>
-
-              <td>
-                <span th:each="role : ${user.roles}"
-                      class="badge bg-secondary me-1"
-                      th:text="${role.name}">
-                </span>
-              </td>
-
-              <td>
-                <button type="button"
-                        class="btn btn-info btn-sm text-white"
-                        data-bs-toggle="modal"
-                        th:data-bs-target="'#editModal-' + ${user.id}">
-                  Edit
-                </button>
-              </td>
-
-              <td>
-                <button type="button"
-                        class="btn btn-danger btn-sm"
-                        data-bs-toggle="modal"
-                        th:data-bs-target="'#deleteModal-' + ${user.id}">
-                  Delete
-                </button>
-              </td>
-
-            </tr>
-
+            <tbody id="usersTableBody">
             </tbody>
 
           </table>
 
 
           <!-- MODALS -->
-          <div th:each="user : ${users}">
+          <!-- MODALS -->
 
-            <!-- EDIT MODAL -->
-            <div class="modal fade"
-                 th:id="'editModal-' + ${user.id}"
-                 tabindex="-1"
-                 aria-hidden="true">
+          <!-- EDIT MODAL -->
+          <div class="modal fade"
+               id="editModal"
+               tabindex="-1"
+               aria-hidden="true">
 
-              <div class="modal-dialog">
+            <div class="modal-dialog">
+              <div class="modal-content">
 
-                <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Edit user</h5>
 
-                  <div class="modal-header">
-
-                    <h5 class="modal-title">
-                      Edit user
-                    </h5>
-
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
-
-                  </div>
-
-                  <form th:action="@{/admin/update}"
-                        method="post"
-                        autocomplete="off">
-
-                    <div class="modal-body">
-
-                      <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                          ID
-                        </label>
-
-                        <input type="text"
-                               class="form-control"
-                               th:value="${user.id}"
-                               disabled>
-
-                        <input type="hidden"
-                               name="id"
-                               th:value="${user.id}">
-
-                      </div>
-
-
-                      <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                          First Name
-                        </label>
-
-                        <input type="text"
-                               class="form-control"
-                               name="firstName"
-                               th:value="${user.firstName}">
-
-                      </div>
-
-
-                      <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                          Last Name
-                        </label>
-
-                        <input type="text"
-                               class="form-control"
-                               name="lastName"
-                               th:value="${user.lastName}">
-
-                      </div>
-
-
-                      <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                          Age
-                        </label>
-
-                        <input type="number"
-                               class="form-control"
-                               name="age"
-                               th:value="${user.age}">
-
-                      </div>
-
-
-                      <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                          Username
-                        </label>
-
-                        <input type="text"
-                               class="form-control"
-                               name="username"
-                               th:value="${user.username}"
-                               autocomplete="off">
-
-                      </div>
-
-
-                      <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                          Password
-                        </label>
-
-                        <input type="password"
-                               class="form-control"
-                               name="password"
-                               autocomplete="new-password"
-                               value="">
-
-                        <div class="form-text">
-                          Leave empty to keep current password.
-                        </div>
-
-                      </div>
-
-
-                      <div class="mb-3">
-
-                        <label class="form-label fw-semibold">
-                          Roles
-                        </label>
-
-                        <div th:each="role : ${roles}"
-                             class="form-check">
-
-                          <input type="checkbox"
-                                 class="form-check-input"
-                                 name="roleIds"
-                                 th:value="${role.id}"
-                                 th:id="'edit-' + ${user.id} + '-role-' + ${role.id}"
-                                 th:checked="${user.roles != null and user.roles.contains(role)}">
-
-                          <label class="form-check-label"
-                                 th:for="'edit-' + ${user.id} + '-role-' + ${role.id}"
-                                 th:text="${role.name}">
-                          </label>
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-
-                    <div class="modal-footer">
-
-                      <button type="button"
-                              class="btn btn-secondary"
-                              data-bs-dismiss="modal">
-                        Close
-                      </button>
-
-                      <button type="submit"
-                              class="btn btn-primary">
-                        Edit
-                      </button>
-
-                    </div>
-
-                  </form>
-
+                  <button type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal">
+                  </button>
                 </div>
 
-              </div>
-
-            </div>
-
-
-            <!-- DELETE MODAL -->
-            <div class="modal fade"
-                 th:id="'deleteModal-' + ${user.id}"
-                 tabindex="-1"
-                 aria-hidden="true">
-
-              <div class="modal-dialog">
-
-                <div class="modal-content">
-
-                  <div class="modal-header">
-
-                    <h5 class="modal-title">
-                      Delete user
-                    </h5>
-
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal">
-                    </button>
-
-                  </div>
-
+                <form id="editForm" autocomplete="off">
 
                   <div class="modal-body">
 
                     <div class="mb-3">
-
-                      <label class="form-label fw-semibold">
-                        ID
-                      </label>
+                      <label class="form-label fw-semibold">ID</label>
 
                       <input type="text"
                              class="form-control"
-                             th:value="${user.id}"
+                             id="editId"
                              disabled>
-
                     </div>
 
-
                     <div class="mb-3">
-
-                      <label class="form-label fw-semibold">
-                        First Name
-                      </label>
+                      <label class="form-label fw-semibold">First Name</label>
 
                       <input type="text"
                              class="form-control"
-                             th:value="${user.firstName}"
-                             disabled>
-
+                             id="editFirstName">
+                      <div class="text-danger" id="editFirstNameError"></div>
                     </div>
 
-
                     <div class="mb-3">
-
-                      <label class="form-label fw-semibold">
-                        Last Name
-                      </label>
+                      <label class="form-label fw-semibold">Last Name</label>
 
                       <input type="text"
                              class="form-control"
-                             th:value="${user.lastName}"
-                             disabled>
+                             id="editLastName">
+                      <div class="text-danger" id="editLastNameError"></div>
 
                     </div>
 
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Age</label>
+
+                      <input type="number"
+                             class="form-control"
+                             id="editAge">
+                      <div class="text-danger" id="editAgeError"></div>
+                    </div>
 
                     <div class="mb-3">
-
-                      <label class="form-label fw-semibold">
-                        Age
-                      </label>
+                      <label class="form-label fw-semibold">Username</label>
 
                       <input type="text"
                              class="form-control"
-                             th:value="${user.age}"
-                             disabled>
-
+                             id="editUsername"
+                             autocomplete="off">
+                      <div class="text-danger" id="editUsernameError"></div>
                     </div>
 
-
                     <div class="mb-3">
+                      <label class="form-label fw-semibold">Password</label>
 
-                      <label class="form-label fw-semibold">
-                        Username
-                      </label>
-
-                      <input type="text"
+                      <input type="password"
                              class="form-control"
-                             th:value="${user.username}"
-                             disabled>
+                             id="editPassword"
+                             autocomplete="new-password">
 
-                    </div>
+                      <div class="form-text">
+                        Leave empty to keep current password.
+                      </div>
 
-
-                    <div class="mb-3">
-
-                      <label class="form-label fw-semibold">
-                        Roles
-                      </label>
-
-                      <div>
-                        <span th:each="role : ${user.roles}"
-                              class="badge bg-secondary me-1"
-                              th:text="${role.name}">
-                        </span>
+                      <div class="text-danger"
+                           id="editPasswordError">
                       </div>
 
                     </div>
 
-                  </div>
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Roles</label>
 
+                      <div id="editRoles"></div>
+                      <div class="text-danger" id="editRolesError"></div>
+                    </div>
+
+                  </div>
 
                   <div class="modal-footer">
 
@@ -459,28 +326,58 @@
                       Close
                     </button>
 
-                    <form th:action="@{/admin/{id}(id=${user.id})}"
-                          method="post">
-
-                      <input type="hidden"
-                             name="_method"
-                             value="delete">
-
-                      <button type="submit"
-                              class="btn btn-danger">
-                        Delete
-                      </button>
-
-                    </form>
+                    <button type="submit"
+                            class="btn btn-primary">
+                      Edit
+                    </button>
 
                   </div>
 
+                </form>
+
+              </div>
+            </div>
+          </div>
+
+
+          <!-- DELETE MODAL -->
+          <div class="modal fade"
+               id="deleteModal"
+               tabindex="-1"
+               aria-hidden="true">
+
+            <div class="modal-dialog">
+              <div class="modal-content">
+
+                <div class="modal-header">
+                  <h5 class="modal-title">Delete user</h5>
+
+                  <button type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal">
+                  </button>
+                </div>
+
+                <div class="modal-body">
+                  Are you sure you want to delete this user?
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button"
+                          class="btn btn-secondary"
+                          data-bs-dismiss="modal">
+                    Close
+                  </button>
+
+                  <button type="button"
+                          class="btn btn-danger"
+                          id="confirmDeleteButton">
+                    Delete
+                  </button>
                 </div>
 
               </div>
-
             </div>
-
           </div>
 
         </div>
@@ -495,6 +392,7 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/admin.js}"></script>
 
 </body>
 </html>
